@@ -32,6 +32,11 @@
 %Drops change.case functions from titles
 %Other changes marked in comments
 
+%Additional changes by Felix Wortmann Callejón, Princeton University (felix@wortmanncallejon.de)
+%misc prints howpublished/institution/publisher/note and URL
+%no doubled period after quoted titles
+
+
 
 ENTRY
   { address
@@ -72,18 +77,25 @@ FUNCTION {init.state.consts}
 
 STRINGS { s t f }
 
+FUNCTION {add.period.q}   %FWC: like add.period$, but no extra period after a quoted title ending in .''
+{ duplicate$ #-1 #3 substring$ ".''" =
+    'skip$
+    'add.period$
+  if$
+}
+
 FUNCTION {output.nonnull}
 { 's :=
   output.state mid.sentence =
     { " " * write$ }
     { output.state after.block =
-    { add.period$ write$
+    { add.period.q write$
       newline$
       "\newblock " write$
     }
     { output.state before.all =
         'write$
-        { add.period$ " " * write$ }
+        { add.period.q " " * write$ }
       if$
     }
       if$
@@ -117,7 +129,7 @@ FUNCTION {item.check}
 }
 
 FUNCTION {fin.entry}
-{ add.period$
+{ add.period.q
   write$
   newline$
 }
@@ -882,7 +894,7 @@ FUNCTION {incollection}
   if$
   pages missing$
     { skip$ }
-    { format.pages output }
+    { format.pages * }   %FWC: no space before the comma
   if$
   new.block
   note output
@@ -978,6 +990,29 @@ FUNCTION {mastersthesis}
 %  write.url                                 %Exclude URL from articles
 }
 
+STRINGS { misc.a misc.b }
+
+FUNCTION {format.misc.pub}   %FWC: howpublished if given; else "type, institution/publisher"
+{ howpublished empty$
+    { type empty$ { "" } { type } if$
+      number empty$ 'skip$ { " " * number * } if$ 'misc.a :=
+      institution empty$
+        { publisher empty$ { "" } { publisher } if$ }
+        { institution }
+      if$ 'misc.b :=
+      misc.a empty$
+        { misc.b }
+        { misc.b empty$
+            { misc.a }
+            { misc.a ", " * misc.b * }
+          if$
+        }
+      if$
+    }
+    { howpublished }
+  if$
+}
+
 FUNCTION {misc}
 { output.bibitem
   list.label.output
@@ -987,14 +1022,11 @@ FUNCTION {misc}
     { skip$ }
     { format.title quote output }
   if$
-  howpublished output
-  institution "institution" output.check     %Added Institution to "misc" entries
+  format.misc.pub output %FWC: howpublished, or type + institution/publisher
   new.block
-  %note output
-  note output.check
-  publisher "publisher" output.check        %Added publisher, for Mendeley
+  note output            %FWC: was "note output.check", which never printed the note
   fin.entry
-  %write.url
+  write.url              %FWC: misc (working papers, webpages) prints its URL
   empty.misc.check
 }
 
