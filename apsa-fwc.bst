@@ -35,6 +35,10 @@
 %Additional changes by Felix Wortmann Callejón, Princeton University (felix@wortmanncallejon.de)
 %misc prints howpublished/institution/publisher/note and URL
 %no doubled period after quoted titles
+%new @newspaper entry type: Author. Year. "Title." {\em Paper}, Month Day. URL
+%  (previously newspaper pieces exported as @article printed "Paper: Forthcoming" and lost date and URL;
+%  Zotero newspaperArticle is mapped to @newspaper by a Better BibTeX postscript, see README)
+%new day field, used by @newspaper
 
 
 
@@ -43,6 +47,7 @@ ENTRY
     author
     booktitle
     chapter
+    day            %FWC: for newspaper
     edition
     editor
     howpublished
@@ -1028,6 +1033,39 @@ FUNCTION {misc}
   fin.entry
   write.url              %FWC: misc (working papers, webpages) prints its URL
   empty.misc.check
+}
+
+FUNCTION {format.month.day}   %FWC: "Month Day", or "Month", or ""
+{ month empty$
+    { "" }
+    { day empty$
+        { month }
+        { month " " * day * }
+      if$
+    }
+  if$
+}
+
+FUNCTION {newspaper}   %FWC: Author. Year. "Title." {\em Paper}, Month Day. URL
+{ output.bibitem
+  list.label.output
+  list.year output.nonnull
+  new.block
+  author "author" item.check
+  title.field field.used =
+    { skip$ }
+    { format.title quote "title" output.check }
+  if$
+  journal emphasize
+  format.month.day duplicate$ empty$
+    'pop$
+    { ", " swap$ * * }
+  if$
+  "journal" output.check
+  new.block
+  note output
+  fin.entry
+  write.url
 }
 
 FUNCTION {phdthesis}
