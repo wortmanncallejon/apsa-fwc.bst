@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="never" default-locale="en-US">
+  <info>
+    <title>APSA (Wortmann Callejón)</title>
+    <title-short>apsa-fwc</title-short>
+    <id>http://www.zotero.org/styles/apsa-fwc</id>
+    <link href="http://www.zotero.org/styles/apsa-fwc" rel="self"/>
+    <link href="http://www.zotero.org/styles/american-political-science-association" rel="template"/>
+    <author>
+      <name>Felix Wortmann Callejón</name>
+    </author>
+    <category citation-format="author-date"/>
+    <category field="political_science"/>
+    <summary>CSL port of apsa-fwc.bst: American Political Science Association references with URLs for working papers, reports, web sources, and newspaper articles.</summary>
+    <updated>2026-11-08T12:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
+  </info>
+
+  <!-- Names -->
+  <macro name="author">
+    <names variable="author">
+      <name and="text" delimiter=", " delimiter-precedes-last="always" name-as-sort-order="first" sort-separator=", "/>
+      <label form="short" prefix=", "/>
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title-italic"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="author-short">
+    <names variable="author">
+      <name form="short" and="text" delimiter=", "/>
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title-italic"/>
+      </substitute>
+    </names>
+  </macro>
+  <macro name="editor-in-book">
+    <names variable="editor" delimiter=", ">
+      <label form="short" suffix=" "/>
+      <name and="text" delimiter=", " delimiter-precedes-last="always"/>
+    </names>
+  </macro>
+
+  <!-- Dates: an italic year suffix follows the year, as in 2008a. An original
+       publication date comes first, with the edition's year in brackets:
+       1835 [2004]. -->
+  <macro name="issued-year">
+    <choose>
+      <if variable="issued">
+        <date variable="issued">
+          <date-part name="year"/>
+        </date>
+      </if>
+      <else>
+        <text term="no date" form="short" text-case="capitalize-first"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="year">
+    <choose>
+      <if variable="original-date">
+        <group delimiter=" ">
+          <group>
+            <date variable="original-date">
+              <date-part name="year"/>
+            </date>
+            <text variable="year-suffix" font-style="italic"/>
+          </group>
+          <text macro="issued-year" prefix="[" suffix="]"/>
+        </group>
+      </if>
+      <else>
+        <text macro="issued-year"/>
+        <text variable="year-suffix" font-style="italic"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="month-day">
+    <date variable="issued">
+      <date-part name="month"/>
+      <date-part name="day" prefix=" "/>
+    </date>
+  </macro>
+
+  <!-- Titles. Title case restores the capitals that pandoc strips from .bib
+       files and matches Better BibTeX's export of English titles. Processors
+       leave a title alone when its item is tagged with another language. -->
+  <macro name="title-quoted">
+    <text variable="title" quotes="true" text-case="title" suffix="."/>
+  </macro>
+  <macro name="title-italic">
+    <text variable="title" font-style="italic" text-case="title"/>
+  </macro>
+  <macro name="title-plain">
+    <text variable="title" text-case="title"/>
+  </macro>
+
+  <!-- Book parts -->
+  <macro name="edition">
+    <choose>
+      <if is-numeric="edition">
+        <group delimiter=" ">
+          <number variable="edition" form="ordinal"/>
+          <text term="edition" form="short"/>
+        </group>
+      </if>
+      <else>
+        <group delimiter=" ">
+          <text variable="edition"/>
+          <text term="edition" form="short"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+  <macro name="series">
+    <choose>
+      <if variable="volume">
+        <group delimiter=" ">
+          <text variable="volume" prefix="Vol. "/>
+          <group delimiter=" ">
+            <text value="of"/>
+            <text variable="collection-title" font-style="italic" text-case="title"/>
+          </group>
+        </group>
+      </if>
+      <else-if variable="collection-number collection-title" match="all">
+        <group delimiter=" ">
+          <text variable="collection-number" prefix="Number "/>
+          <text value="in" font-style="italic"/>
+          <text variable="collection-title" quotes="true" text-case="title"/>
+        </group>
+      </else-if>
+      <else>
+        <text variable="collection-title" text-case="title"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="publisher">
+    <group delimiter=": ">
+      <text variable="publisher-place"/>
+      <text variable="publisher"/>
+    </group>
+  </macro>
+
+  <!-- Entry bodies -->
+  <macro name="article">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <choose>
+        <if variable="volume">
+          <group delimiter=": ">
+            <group delimiter=" ">
+              <text variable="container-title" font-style="italic"/>
+              <group>
+                <text variable="volume"/>
+                <text variable="issue" prefix="(" suffix=")"/>
+              </group>
+            </group>
+            <text variable="page"/>
+          </group>
+        </if>
+        <else>
+          <group delimiter=": ">
+            <text variable="container-title" font-style="italic"/>
+            <text value="Forthcoming"/>
+          </group>
+        </else>
+      </choose>
+    </group>
+  </macro>
+  <macro name="book">
+    <group delimiter=". ">
+      <text macro="title-italic"/>
+      <text macro="series"/>
+      <text macro="edition"/>
+      <text macro="publisher"/>
+    </group>
+  </macro>
+  <macro name="chapter">
+    <group delimiter=". ">
+      <group delimiter=" ">
+        <text macro="title-quoted"/>
+        <group delimiter=", ">
+          <group delimiter=" ">
+            <text value="In"/>
+            <text variable="container-title" font-style="italic" text-case="title"/>
+          </group>
+          <text macro="editor-in-book"/>
+        </group>
+      </group>
+      <text macro="edition"/>
+      <text macro="series"/>
+      <group delimiter=", ">
+        <text macro="publisher"/>
+        <text variable="page"/>
+      </group>
+    </group>
+  </macro>
+  <macro name="conference">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <group delimiter=", ">
+        <group delimiter=" ">
+          <text value="Paper presented at the"/>
+          <choose>
+            <if variable="event-title">
+              <text variable="event-title" text-case="title"/>
+            </if>
+            <else>
+              <text variable="container-title" text-case="title"/>
+            </else>
+          </choose>
+        </group>
+        <choose>
+          <if variable="event-place">
+            <text variable="event-place"/>
+          </if>
+          <else>
+            <text variable="publisher-place"/>
+          </else>
+        </choose>
+      </group>
+    </group>
+  </macro>
+  <!-- A group or macro disappears when every variable it calls is empty,
+       literal labels included. Each label therefore stands alone when the
+       variables beside it are empty. -->
+  <macro name="report-label">
+    <choose>
+      <if variable="genre">
+        <text variable="genre"/>
+      </if>
+      <else-if variable="number">
+        <text value="Technical Report"/>
+      </else-if>
+      <else>
+        <text value="Technical report"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="report">
+    <group delimiter=". ">
+      <text macro="title-plain"/>
+      <choose>
+        <if variable="number publisher" match="any">
+          <group>
+            <text macro="report-label"/>
+            <text variable="number" prefix=" "/>
+            <text variable="publisher" prefix=", "/>
+          </group>
+        </if>
+        <else>
+          <text macro="report-label"/>
+        </else>
+      </choose>
+    </group>
+  </macro>
+  <macro name="manuscript-label">
+    <choose>
+      <if variable="genre">
+        <text variable="genre"/>
+      </if>
+      <else>
+        <text value="Unpublished paper"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="manuscript">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <choose>
+        <if variable="publisher">
+          <group delimiter=", ">
+            <text macro="manuscript-label"/>
+            <text variable="publisher"/>
+          </group>
+        </if>
+        <else>
+          <text macro="manuscript-label"/>
+        </else>
+      </choose>
+    </group>
+  </macro>
+  <macro name="thesis-label">
+    <choose>
+      <if variable="genre">
+        <text variable="genre"/>
+      </if>
+      <else>
+        <text value="Doctoral Dissertation"/>
+      </else>
+    </choose>
+  </macro>
+  <macro name="thesis">
+    <group delimiter=". ">
+      <text macro="title-italic"/>
+      <choose>
+        <if variable="publisher">
+          <group delimiter=", ">
+            <text macro="thesis-label"/>
+            <text variable="publisher"/>
+          </group>
+        </if>
+        <else>
+          <text macro="thesis-label"/>
+        </else>
+      </choose>
+    </group>
+  </macro>
+  <macro name="pamphlet">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <text macro="publisher"/>
+    </group>
+  </macro>
+  <macro name="newspaper">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <group delimiter=", ">
+        <text variable="container-title" font-style="italic"/>
+        <text macro="month-day"/>
+      </group>
+    </group>
+  </macro>
+  <macro name="misc">
+    <group delimiter=" ">
+      <text macro="title-quoted"/>
+      <group delimiter=", ">
+        <text variable="container-title"/>
+        <group delimiter=" ">
+          <text variable="genre"/>
+          <text variable="number"/>
+        </group>
+        <text variable="publisher"/>
+      </group>
+    </group>
+  </macro>
+  <macro name="body">
+    <choose>
+      <if type="article-journal">
+        <text macro="article"/>
+      </if>
+      <else-if type="book">
+        <text macro="book"/>
+      </else-if>
+      <else-if type="chapter entry entry-dictionary entry-encyclopedia" match="any">
+        <text macro="chapter"/>
+      </else-if>
+      <else-if type="paper-conference">
+        <text macro="conference"/>
+      </else-if>
+      <else-if type="report">
+        <text macro="report"/>
+      </else-if>
+      <else-if type="manuscript">
+        <text macro="manuscript"/>
+      </else-if>
+      <else-if type="thesis">
+        <text macro="thesis"/>
+      </else-if>
+      <else-if type="pamphlet">
+        <text macro="pamphlet"/>
+      </else-if>
+      <else-if type="webpage post post-weblog" match="any">
+        <text macro="misc"/>
+      </else-if>
+      <!-- pandoc gives @newspaper and @misc entries an empty type, so a
+           container title is the only sign of a newspaper here. -->
+      <else-if type="article-newspaper article-magazine" variable="container-title" match="any">
+        <text macro="newspaper"/>
+      </else-if>
+      <else>
+        <text macro="misc"/>
+      </else>
+    </choose>
+  </macro>
+
+  <!-- The bst drops the note from conference papers. -->
+  <macro name="note">
+    <choose>
+      <if type="paper-conference" match="none">
+        <text variable="note"/>
+      </if>
+    </choose>
+  </macro>
+
+  <!-- As in the bst, journal articles, books, chapters, conference papers, and
+       theses omit their URLs. A URL ends the entry without a period. -->
+  <macro name="url">
+    <choose>
+      <if type="article-journal book chapter entry entry-dictionary entry-encyclopedia paper-conference thesis" match="none">
+        <text variable="URL"/>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="locator">
+    <choose>
+      <if locator="page">
+        <text variable="locator"/>
+      </if>
+      <else>
+        <group delimiter=" ">
+          <label variable="locator" form="short"/>
+          <text variable="locator"/>
+        </group>
+      </else>
+    </choose>
+  </macro>
+
+  <citation et-al-min="4" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="true" collapse="year-suffix" year-suffix-delimiter=",">
+    <layout prefix="(" suffix=")" delimiter="; ">
+      <group delimiter=", ">
+        <group delimiter=" ">
+          <text macro="author-short"/>
+          <text macro="year"/>
+        </group>
+        <text macro="locator"/>
+      </group>
+    </layout>
+  </citation>
+
+  <bibliography hanging-indent="true">
+    <sort>
+      <key macro="author"/>
+      <key macro="year"/>
+      <key variable="title"/>
+    </sort>
+    <layout>
+      <group delimiter=" ">
+        <group delimiter=". " suffix=".">
+          <text macro="author"/>
+          <text macro="year"/>
+          <text macro="body"/>
+          <text macro="note"/>
+        </group>
+        <text macro="url"/>
+      </group>
+    </layout>
+  </bibliography>
+</style>
