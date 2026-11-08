@@ -1,5 +1,5 @@
 # apsa-fwc.bst
-BibTeX style file for political science (adapted from apsa.bst, to include URLs for Working Papers).
+BibTeX style file for political science (adapted from apsa.bst, to include URLs for Working Papers [but nothing else], have better handling of newspaper articles and include original dates in the citation.).
 
 ## CSL version
 
