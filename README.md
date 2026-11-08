@@ -1,6 +1,23 @@
 # apsa-fwc.bst
 BibTeX style file for political science (adapted from apsa.bst, to include URLs for Working Papers).
 
+## CSL version
+
+`apsa-fwc.csl` ports this style to the Citation Style Language for pandoc, Quarto, and Zotero's word-processor plugins. In a Quarto document, point the YAML header to it:
+
+```yaml
+csl: apsa-fwc.csl
+```
+
+The CSL version follows the BibTeX style, with these differences:
+
+- Citations print `(Smith 2000)`, without natbib's comma.
+- Reports and dissertations omit the place of publication, and edition numbers print as ordinals ("5th ed.").
+- English titles are set in title case. Set `langid` (Zotero's Language field) on other items, or their titles are title-cased too.
+- Thesis, report, and manuscript types print as stored, so pandoc labels a `@phdthesis` "PhD thesis".
+- Web pages and blog posts show the site name.
+- An `origdate` field prints the original year first: `1835 [2000]`. In Zotero, the style reads the Original Date field directly.
+
 ## Installing and updating
 
 TeX looks for personal style files in `TEXMFHOME`, which on macOS is `~/Library/texmf`. Check this with:
