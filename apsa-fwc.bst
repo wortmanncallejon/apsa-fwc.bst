@@ -39,6 +39,9 @@
 %  (previously newspaper pieces exported as @article printed "Paper: Forthcoming" and lost date and URL;
 %  Zotero newspaperArticle is mapped to @newspaper by a Better BibTeX postscript, see README)
 %new day field, used by @newspaper
+%new origdate field: an original publication date prints as "1835 [2004]" in the
+%  bibliography and in citations; a disambiguating letter follows the original year
+%  ("1971a [1999]"). Better BibTeX exports origdate through a postscript, see README
 
 
 
@@ -57,6 +60,7 @@ ENTRY
     month
     note
     number
+    origdate       %FWC: original publication date
     organization
     pages
     publisher
@@ -742,7 +746,11 @@ FUNCTION {output.bibitem}
   if$
   make.full.label write$
   "}{" write$
-  list.year write$
+  origdate empty$                  %FWC: braces shield the brackets in "1835 [2004]"
+    { list.year }                  %     from \bibitem's optional argument
+    { "{" list.year * "}" * }
+  if$
+  write$
   "}{" write$
   cite$ write$
   "}" write$
@@ -1273,7 +1281,8 @@ FUNCTION {calc.label} %%%XXX change
     { sort.format.title }
     { sortify.names }
   if$
-  year field.or.null purify$ #-1 #4 substring$ sortify
+  origdate field.or.null purify$ #1 #4 substring$   %FWC: "1922 [1978]" and "1978" differ
+  year field.or.null purify$ #-1 #4 substring$ * sortify
   *
   'sort.label :=
 }
@@ -1404,10 +1413,17 @@ FUNCTION {reverse.pass}
     { "a" 'extra.label := }
     'skip$
   if$
-  year empty$
-    { "N.d." extra.label emphasize * 'list.year := }
-    { year extra.label emphasize * 'list.year := }
+  origdate empty$
+    { year empty$
+        { "N.d." extra.label emphasize * }
+        { year extra.label emphasize * }
+      if$
+    }
+    { origdate #1 #4 substring$ extra.label emphasize *   %FWC: "1835 [2004]"; a letter
+      " [" * year empty$ { "N.d." } 'year if$ * "]" *     %     suffix follows 1835
+    }
   if$
+  'list.year :=
   extra.label 'next.extra :=
 }
 
